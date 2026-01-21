@@ -1,30 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import lightIcon from "../../assets/sun-light-mode.png";
 import darkIcon from "../../assets/sun-dark-mode.png";
 
-const Navbar = () => {
-  const [darkMode, setDarkMode] = useState(false);
+const Navbar = ({ darkMode, setDarkMode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+  if (menuOpen) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+    // Cleanup (important)
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [menuOpen]);
+
 
   return (
-    <nav
-      className={`w-full ${darkMode ? "bg-[#0f1624] text-[#EDF2F8]" : "bg-[#EDF2F8] text-[#0f1624]"}`}>
+    <nav className={`w-full ${darkMode ? "bg-[#0f1624] text-white" : "bg-[#EDF2F8] text-[#0f1624]"}`}>
       <div className="flex items-center justify-between px-2 md:px-6 lg:px-6 py-2">
-        <div className="text-[28px] lg:text-[35px] font-extrabold tracking-wide">
-          SH
-          <span className="text-[#dc143c] font-extrabold text-[28px] lg:text-[35px]">
-            ANU
-          </span>
+        <div className="text-[35px] lg:text-[35px] font-extrabold tracking-wide">
+          SH<span className="text-[#dc143c] font-extrabold text-[35px] lg:text-[35px]">ANU</span>
         </div>
-
         <ul className="hidden lg:flex items-center gap-2 uppercase text-base font-semibold font-poppins">
           <li className="px-4 py-2 text-[#dc143c] transition-all duration-200 rounded-xl hover:bg-[#dc143c] hover:text-white cursor-pointer">
             Home
           </li>
           {["About", "Work", "Skills", "Contact"].map((item) => (
-          <li key={item} className="px-4 py-2 rounded-xl transition-all duration-200 hover:bg-[#dc143c] hover:text-white cursor-pointer">
-            {item}
-          </li>
+            <li key={item} className="px-4 py-2 rounded-xl transition-all duration-200 hover:bg-[#dc143c] hover:text-white cursor-pointer">
+              {item}
+            </li>
           ))}
 
           {/* THEME TOGGLE */}
@@ -47,16 +54,22 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
-      {menuOpen && (
-        <div className="lg:hidden px-4 pb-4 space-y-3 font-poppins font-semibold uppercase">
+      {/* MOBILE SIDEBAR */}
+      <div className={`fixed top-0 right-0 h-screen w-[75%] max-w-sm bg-[#EDF2F8] dark:bg-[#0f1624] z-50 transform transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "translate-x-full"} lg:hidden`}>
+        <div className="flex justify-end p-4">
+          <button onClick={() => setMenuOpen(false)} className="text-2xl">
+            ✕
+          </button>
+        </div>
+        {/* MENU ITEMS */}
+        <div className="px-6 space-y-6 font-poppins font-semibold uppercase text-lg">
           <div className="text-[#dc143c]">Home</div>
           <div>About</div>
           <div>Work</div>
           <div>Skills</div>
           <div>Contact</div>
         </div>
-      )}
+      </div>
     </nav>
   );
 };
